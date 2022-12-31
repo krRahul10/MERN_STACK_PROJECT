@@ -1,5 +1,5 @@
-import React from 'react'
-import './edit.css'
+import React from "react";
+import "./edit.css";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -9,10 +9,10 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-
+import { Spiner } from "../../Components/Spiner/Spiner";
 
 export const Edit = () => {
+  const [showSpin, SetShowSpin] = useState(true);
   const [inputdata, setInputData] = useState({
     fname: "",
     lname: "",
@@ -57,6 +57,13 @@ export const Edit = () => {
     }
   }, [image]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      SetShowSpin(false);
+    }, 1500);
+  }, []);
+
+
   const submitUserDate = (e) => {
     e.preventDefault();
 
@@ -88,7 +95,8 @@ export const Edit = () => {
   };
   return (
     <div>
-       <div className="container">
+      {
+        showSpin ? <Spiner/> : <div className="container">
         <h2 className="text-center mt-1">Update Your Details</h2>
         <Card className="shadow mt-3 p-3">
           <div className="profile_div text-center">
@@ -156,7 +164,11 @@ export const Edit = () => {
 
               <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
                 <Form.Label>Select Your Status</Form.Label>
-                <Select options={options}   value={status} onChange={setStatusValue}  />
+                <Select
+                  options={options}
+                  value={status}
+                  onChange={setStatusValue}
+                />
               </Form.Group>
 
               <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
@@ -186,7 +198,9 @@ export const Edit = () => {
           </Form>
         </Card>
         <ToastContainer position="top-center" />
-      </div>
+      </div> 
+      }
+      
     </div>
-  )
-}
+  );
+};

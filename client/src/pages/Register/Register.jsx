@@ -9,8 +9,10 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Spiner } from "../../Components/Spiner/Spiner";
 
 export const Register = () => {
+  const [showSpin, SetShowSpin] = useState(true);
   const [inputdata, setInputData] = useState({
     fname: "",
     lname: "",
@@ -55,6 +57,12 @@ export const Register = () => {
     }
   }, [image]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      SetShowSpin(false);
+    }, 1500);
+  }, []);
+
   const submitUserDate = (e) => {
     e.preventDefault();
 
@@ -86,105 +94,141 @@ export const Register = () => {
   };
   return (
     <>
-      <div className="container">
-        <h2 className="text-center mt-1">Register Your Details</h2>
-        <Card className="shadow mt-3 p-3">
-          <div className="profile_div text-center">
-            <img src={preview ? preview : "/man.png"} alt="img" />
-          </div>
-          <Form>
-            <Row>
-              <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
-                <Form.Label>First Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="fname"
-                  value={inputdata.fname}
-                  onChange={setInputValue}
-                  placeholder="Enter Your First Name"
-                />
-              </Form.Group>
-              <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
-                <Form.Label>Last Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="lname"
-                  value={inputdata.lname}
-                  onChange={setInputValue}
-                  placeholder="Enter Your Last Name"
-                />
-              </Form.Group>
-              <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
-                <Form.Label>Email address</Form.Label>
-                <Form.Control
-                  type="email"
-                  name="email"
-                  value={inputdata.email}
-                  onChange={setInputValue}
-                  placeholder="Enter Your Email"
-                />
-              </Form.Group>
-              <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
-                <Form.Label>Phone Number</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Enter Your Mobile Number"
-                  name="mobile"
-                  value={inputdata.mobile}
-                  onChange={setInputValue}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
-                <Form.Label>Select Your Gander</Form.Label>
-                <Form.Check
-                  type={"radio"}
-                  label={`male`}
-                  name="gender"
-                  value={"Male"}
-                  onChange={setInputValue}
-                />
-                <Form.Check
-                  type={"radio"}
-                  label={`female`}
-                  name="gender"
-                  value={"Female"}
-                  onChange={setInputValue}
-                />
-              </Form.Group>
+      {showSpin ? (
+        <Spiner />
+      ) : (
+        <div className="container">
+          <h2 className="text-center mt-1">Register Your Details</h2>
+          <Card className="shadow mt-3 p-3">
+            <div className="profile_div text-center">
+              <img src={preview ? preview : "/man.png"} alt="img" />
+            </div>
+            <Form>
+              <Row>
+                <Form.Group
+                  className="mb-3 col-lg-6"
+                  controlId="formBasicEmail"
+                >
+                  <Form.Label>First Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="fname"
+                    value={inputdata.fname}
+                    onChange={setInputValue}
+                    placeholder="Enter Your First Name"
+                  />
+                </Form.Group>
+                <Form.Group
+                  className="mb-3 col-lg-6"
+                  controlId="formBasicEmail"
+                >
+                  <Form.Label>Last Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="lname"
+                    value={inputdata.lname}
+                    onChange={setInputValue}
+                    placeholder="Enter Your Last Name"
+                  />
+                </Form.Group>
+                <Form.Group
+                  className="mb-3 col-lg-6"
+                  controlId="formBasicEmail"
+                >
+                  <Form.Label>Email address</Form.Label>
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    value={inputdata.email}
+                    onChange={setInputValue}
+                    placeholder="Enter Your Email"
+                  />
+                </Form.Group>
+                <Form.Group
+                  className="mb-3 col-lg-6"
+                  controlId="formBasicEmail"
+                >
+                  <Form.Label>Phone Number</Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="Enter Your Mobile Number"
+                    name="mobile"
+                    value={inputdata.mobile}
+                    onChange={setInputValue}
+                  />
+                </Form.Group>
+                <Form.Group
+                  className="mb-3 col-lg-6"
+                  controlId="formBasicEmail"
+                >
+                  <Form.Label>Select Your Gander</Form.Label>
+                  <Form.Check
+                    type={"radio"}
+                    label={`male`}
+                    name="gender"
+                    value={"Male"}
+                    onChange={setInputValue}
+                  />
+                  <Form.Check
+                    type={"radio"}
+                    label={`female`}
+                    name="gender"
+                    value={"Female"}
+                    onChange={setInputValue}
+                  />
+                </Form.Group>
 
-              <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
-                <Form.Label>Select Your Status</Form.Label>
-                <Select options={options}   value={status} onChange={setStatusValue}  />
-              </Form.Group>
+                <Form.Group
+                  className="mb-3 col-lg-6"
+                  controlId="formBasicEmail"
+                >
+                  <Form.Label>Select Your Status</Form.Label>
+                  <Select
+                    options={options}
+                    value={status}
+                    onChange={setStatusValue}
+                  />
+                </Form.Group>
 
-              <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
-                <Form.Label>Select Your Profile</Form.Label>
-                <Form.Control
-                  type="file"
-                  name="user_profile"
-                  onChange={setProfileValue}
-                  placeholder="Select Your Profile"
-                />
-              </Form.Group>
-              <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
-                <Form.Label>Enter Your Location</Form.Label>
-                <Form.Control
-                  type="text"
-                  onChange={setInputValue}
-                  name="location"
-                  value={inputdata.location}
-                  placeholder="Enter Your Location"
-                />
-              </Form.Group>
+                <Form.Group
+                  className="mb-3 col-lg-6"
+                  controlId="formBasicEmail"
+                >
+                  <Form.Label>Select Your Profile</Form.Label>
+                  <Form.Control
+                    type="file"
+                    name="user_profile"
+                    onChange={setProfileValue}
+                    placeholder="Select Your Profile"
+                  />
+                </Form.Group>
+                <Form.Group
+                  className="mb-3 col-lg-6"
+                  controlId="formBasicEmail"
+                >
+                  <Form.Label>Enter Your Location</Form.Label>
+                  <Form.Control
+                    type="text"
+                    onChange={setInputValue}
+                    name="location"
+                    value={inputdata.location}
+                    placeholder="Enter Your Location"
+                  />
+                </Form.Group>
 
-              <Button variant="primary" type="submit" onClick={submitUserDate}>
-                Submit
-              </Button>
-            </Row>
-          </Form>
-        </Card>
-        <ToastContainer position="top-center" />
-      </div>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  onClick={submitUserDate}
+                >
+                  Submit
+                </Button>
+              </Row>
+            </Form>
+          </Card>
+          <ToastContainer position="top-center" />
+        </div>
+      )}
     </>
   );
 };

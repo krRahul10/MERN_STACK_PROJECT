@@ -6,12 +6,23 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { useNavigate } from "react-router-dom";
 import { Tables } from "../../Components/Tables/Tables";
 
+import { Spiner } from "../../Components/Spiner/Spiner";
+import { useState } from "react";
+import { useEffect } from "react";
+
 export const Home = () => {
+  const [showSpin, SetShowSpin] = useState(true);
   const navigate = useNavigate();
 
-  const addUser = () =>{
-    navigate("/register")
-  }
+  const addUser = () => {
+    navigate("/register");
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      SetShowSpin(false);
+    }, 1500);
+  }, []);
 
   return (
     <>
@@ -115,7 +126,7 @@ export const Home = () => {
             </div>
           </div>
         </div>
-       <Tables/>
+        {showSpin ? <Spiner /> : <Tables />}
       </div>
     </>
   );
