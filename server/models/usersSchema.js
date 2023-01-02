@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
-const validator = required("validator");
+const validator = require("validator");
 
 const usersSchema = new mongoose.Schema({
   fname: {
     type: String,
     required: true,
     trim: true,
+    
   },
   lname: {
     type: String,
@@ -25,7 +26,7 @@ const usersSchema = new mongoose.Schema({
   mobile: {
     type: String,
     required: true,
-    unique:true,
+    unique: true,
     minlength: 10,
     maxlength: 10,
   },
