@@ -10,6 +10,8 @@ import { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Spiner } from "../../Components/Spiner/Spiner";
+import { registerFunction } from "../../services/Apis";
+import { useNavigate} from 'react-router-dom'
 
 export const Register = () => {
   const [showSpin, SetShowSpin] = useState(true);
@@ -27,6 +29,7 @@ export const Register = () => {
   const [status, setStatus] = useState("Active");
   const [image, setImage] = useState("");
   const [preview, setPreview] = useState("");
+  const navigate = useNavigate()
 
   //Status Option
 
@@ -57,13 +60,7 @@ export const Register = () => {
     }
   }, [image]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      SetShowSpin(false);
-    }, 1500);
-  }, []);
-
-  const submitUserDate = (e) => {
+  const submitUserDate = async (e) => {
     e.preventDefault();
 
     const { fname, lname, email, mobile, gender, location } = inputdata;
@@ -89,9 +86,53 @@ export const Register = () => {
     } else if (location === "") {
       toast.error("Location is Required");
     } else {
-      toast.success("Registration done");
+      // toast.success("Registration done");
+
+      const data = new FormData();
+      data.append("fname", fname);
+      data.append("lname", lname);
+      data.append("email", email);
+      data.append("mobile", mobile);
+      data.append("gender", gender);
+      data.append("status", status);
+      data.append("user_profile", image);
+      data.append("location", location);
+
+      const config = {
+        "Content-Type":"multipart/form-data"
+      }
+
+      const response = await registerFunction(data,config)
+      // console.log(response);
+
+      if(response.status === 201) {
+        setInputData({
+          ...inputdata,
+          fname: "",
+          lname: "",
+          email: "",
+          mobile: "",
+          gender: "",
+          location: "",
+        })
+        setImage("")
+        setStatus("")
+        navigate("/")
+
+      }
+      else{
+        toast.error("Something Went Wrong ...Error Found!!!")
+      }
+    
     }
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      SetShowSpin(false);
+    }, 1500);
+  }, []);
+
   return (
     <>
       {showSpin ? (
@@ -183,11 +224,7 @@ export const Register = () => {
                   controlId="formBasicEmail"
                 >
                   <Form.Label>Select Your Status</Form.Label>
-                  <Select
-                    options={options}
-                    value={status}
-                    onChange={setStatusValue}
-                  />
+                  <Select options={options} onChange={setStatusValue} />
                 </Form.Group>
 
                 <Form.Group
