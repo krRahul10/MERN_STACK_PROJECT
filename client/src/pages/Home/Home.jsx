@@ -5,20 +5,38 @@ import Button from "react-bootstrap/Button";
 import Dropdown from "react-bootstrap/Dropdown";
 import { useNavigate } from "react-router-dom";
 import { Tables } from "../../Components/Tables/Tables";
-
 import { Spiner } from "../../Components/Spiner/Spiner";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useContext } from "react";
+import { addData } from "../../Components/context/ContextProvider";
+import Alert from 'react-bootstrap/Alert';
+import { getUserData } from "../../services/Apis";
 
 export const Home = () => {
   const [showSpin, SetShowSpin] = useState(true);
+  const [alluserdata, setAllUserData] = useState([])
   const navigate = useNavigate();
+  const { userData, setUserData } = useContext(addData);
 
+  // console.log("alluserdata", alluserdata)
   const addUser = () => {
     navigate("/register");
   };
 
+  const allUserData = async () => {
+    const response= await getUserData()
+    if(response.status ===200) {
+      setAllUserData(response.data)
+    }else{
+      console.log("error for get user data")
+    }
+   
+
+  }
+
   useEffect(() => {
+    allUserData()
     setTimeout(() => {
       SetShowSpin(false);
     }, 1500);
@@ -26,6 +44,12 @@ export const Home = () => {
 
   return (
     <>
+    {
+      userData ?  <Alert variant="success" onClose={() => setUserData("")} dismissible>
+      <>{`${userData.fname.toUpperCase()} ${ userData.lname.toUpperCase()}`} Successfully Add To DataBase</>
+    
+    </Alert>:""
+    }
       <div className="container">
         <div className="main_div">
           {/* search_button */}
@@ -45,7 +69,7 @@ export const Home = () => {
             </div>
             <div className="add_btn">
               <Button variant="primary" onClick={addUser}>
-                <i class="fa-solid fa-plus"></i>&nbsp;Add User
+                <i className="fa-solid fa-plus"></i>&nbsp;Add User
               </Button>
             </div>
           </div>
@@ -87,7 +111,7 @@ export const Home = () => {
               <h3>Short By Value</h3>
               <Dropdown className="text-center">
                 <Dropdown.Toggle className="dropdown_btn" id="dropdown-basic">
-                  <i class="fa-solid fa-sort"></i>
+                  <i className="fa-solid fa-sort"></i>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item>New</Dropdown.Item>
@@ -126,7 +150,7 @@ export const Home = () => {
             </div>
           </div>
         </div>
-        {showSpin ? <Spiner /> : <Tables />}
+        {showSpin ? <Spiner /> : <Tables alluserdata={alluserdata} />}
       </div>
     </>
   );

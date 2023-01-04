@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./register.css";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
@@ -12,9 +12,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { Spiner } from "../../Components/Spiner/Spiner";
 import { registerFunction } from "../../services/Apis";
 import { useNavigate} from 'react-router-dom'
+import { addData } from "../../Components/context/ContextProvider";
 
 export const Register = () => {
   const [showSpin, SetShowSpin] = useState(true);
+  const { userData, setUserData } = useContext(addData);
   const [inputdata, setInputData] = useState({
     fname: "",
     lname: "",
@@ -24,7 +26,7 @@ export const Register = () => {
     location: "",
   });
 
-  // console.log(inputdata);
+  
 
   const [status, setStatus] = useState("Active");
   const [image, setImage] = useState("");
@@ -118,6 +120,7 @@ export const Register = () => {
         setImage("")
         setStatus("")
         navigate("/")
+        setUserData(response.data)
 
       }
       else{
