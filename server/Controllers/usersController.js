@@ -48,10 +48,26 @@ exports.userpost = async (req, res) => {
   }
 };
 
-exports.userGet = async (req,res) => {
+// ***** To GET ALL USERS DETAILS *********
+
+exports.userGet = async (req, res) => {
   try {
     const userData = await users.find();
     res.status(200).json(userData);
+  } catch (error) {
+    res.status(424).json(error);
+  }
+};
+
+// ***** To GET SINGLE USER DETAILS *********
+
+exports.singleUserGet = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const userDetails = await users.findOne({ _id: id });
+
+    res.status(200).json(userDetails);
   } catch (error) {
     res.status(424).json(error);
   }
