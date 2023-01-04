@@ -6,18 +6,18 @@ import { Spiner } from "../../Components/Spiner/Spiner";
 import { useParams } from "react-router-dom";
 import { getSingleUserData } from "../../services/Apis";
 import { BACKEND_URL } from "../../services/helper";
+import moment from "moment";
 
 export const Profile = () => {
   const [showSpin, SetShowSpin] = useState(true);
-  const [ userProfile, setUserProfile] = useState({})
+  const [userProfile, setUserProfile] = useState({});
 
   const { id } = useParams();
 
   const singleUser = async () => {
     try {
       const res = await getSingleUserData(id);
-      console.log("res from signle", res.data);
-      setUserProfile(res.data)
+      setUserProfile(res.data);
     } catch (error) {
       console.log("Error Users Single page");
     }
@@ -32,18 +32,20 @@ export const Profile = () => {
 
   return (
     <>
-     <h1>Profile Page</h1>
+      <h1>Profile Page</h1>
       {showSpin ? (
         <Spiner />
       ) : (
         <div className="container">
-         
           <Card className="card-profile shadow col-lg-6 mx-auto mt-5">
             <Card.Body>
               <Row>
                 <div className="col">
                   <div className="card-profile-stats d-flex justify-content-center">
-                    <img src={`${BACKEND_URL}/uploads/${userProfile.profile}`} alt="" />
+                    <img
+                      src={`${BACKEND_URL}/uploads/${userProfile.profile}`}
+                      alt=""
+                    />
                   </div>
                 </div>
               </Row>
@@ -70,12 +72,16 @@ export const Profile = () => {
                 </h4>
                 <h5>
                   <i className="fa-solid fa-calendar-days calendar"></i>
-                  &nbsp;Date Created&nbsp;:- <span>{userProfile.dateCreated}</span>{" "}
+                  &nbsp;Date Created&nbsp;:-{" "}
+                  <span>
+                    {moment(userProfile.dateCreated).format("DD-MM-YYYY")}
+                  </span>{" "}
                 </h5>
                 <h5>
                   {" "}
                   <i className="fa-solid fa-calendar-days calendar"></i>
-                  &nbsp;Date Updated&nbsp;:- <span>{userProfile.dateUpdated}</span>{" "}
+                  &nbsp;Date Updated&nbsp;:-{" "}
+                  <span>{userProfile.dateUpdated}</span>{" "}
                 </h5>
               </div>
             </Card.Body>
