@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import "./profile.css";
+import moment from "moment";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/esm/Row";
 import { Spiner } from "../../Components/Spiner/Spiner";
 import { useParams } from "react-router-dom";
 import { getSingleUserData } from "../../services/Apis";
 import { BACKEND_URL } from "../../services/helper";
-import moment from "moment";
 
 export const Profile = () => {
   const [showSpin, SetShowSpin] = useState(true);
   const [userProfile, setUserProfile] = useState({});
-
   const { id } = useParams();
+
 
   const singleUser = async () => {
     try {
@@ -28,7 +28,7 @@ export const Profile = () => {
     setTimeout(() => {
       SetShowSpin(false);
     }, 1500);
-  }, []);
+  }, [id]);
 
   return (
     <>

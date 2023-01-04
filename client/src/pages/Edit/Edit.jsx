@@ -10,6 +10,8 @@ import { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Spiner } from "../../Components/Spiner/Spiner";
+import { useParams } from "react-router-dom";
+import { getSingleUserData } from "../../services/Apis";
 
 export const Edit = () => {
   const [showSpin, SetShowSpin] = useState(true);
@@ -50,8 +52,22 @@ export const Edit = () => {
   const setProfileValue = (e) => {
     setImage(e.target.files[0]);
   };
+  const { id } = useParams();
+
+
+  const singleUser = async () => {
+    try {
+      const res = await getSingleUserData(id);
+      setInputData(res.data);
+      // setImage(res.data.profile)
+    } catch (error) {
+      console.log("Error Users Single page");
+    }
+  };
+
 
   useEffect(() => {
+    singleUser();
     if (image) {
       setPreview(URL.createObjectURL(image));
     }

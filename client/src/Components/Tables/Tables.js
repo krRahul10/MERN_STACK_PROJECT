@@ -10,7 +10,7 @@ import { BACKEND_URL } from "../../services/helper";
 import { NavLink } from "react-router-dom";
 
 export const Tables = ({ alluserdata }) => {
-  console.log("data", alluserdata);
+  
   return (
     <>
       <div className="container">
@@ -78,11 +78,14 @@ export const Tables = ({ alluserdata }) => {
                                
                               </Dropdown.Item>
                               <Dropdown.Item>
+                                <NavLink to ={`/edit/${element._id}`} className='text-decoration-none' style={{color:"black"}}>
                                 <i
                                   className="fa-solid fa-pen-to-square"
                                   style={{ color: "blue" }}
                                 ></i>{" "}
                                 <span>Edit</span>
+                                </NavLink>
+                               
                               </Dropdown.Item>
                               <Dropdown.Item>
                                 <i
