@@ -5,11 +5,10 @@ import Table from "react-bootstrap/Table";
 import Dropdown from "react-bootstrap/Dropdown";
 import Badge from "react-bootstrap/Badge";
 import "./table.css";
-import { addData } from "../context/ContextProvider";
 import { BACKEND_URL } from "../../services/helper";
 import { NavLink } from "react-router-dom";
 
-export const Tables = ({ alluserdata }) => {
+export const Tables = ({ alluserdata, deleteUser }) => {
   
   return (
     <>
@@ -88,11 +87,13 @@ export const Tables = ({ alluserdata }) => {
                                
                               </Dropdown.Item>
                               <Dropdown.Item>
-                                <i
+                               <div onClick={()=>deleteUser(element._id)}>
+                               <i
                                   className="fa-solid fa-trash"
                                   style={{ color: "red" }}
                                 ></i>{" "}
                                 <span>Delete</span>
+                               </div>
                               </Dropdown.Item>
                             </Dropdown.Menu>
                           </Dropdown>

@@ -9,56 +9,90 @@ import { Spiner } from "../../Components/Spiner/Spiner";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useContext } from "react";
-import { addData, updateData } from "../../Components/context/ContextProvider";
-import Alert from 'react-bootstrap/Alert';
-import { getUserData } from "../../services/Apis";
+import {
+  addData,
+  deleteData,
+  updateData,
+} from "../../Components/context/ContextProvider";
+import Alert from "react-bootstrap/Alert";
+import { deleteFunction, getUserData } from "../../services/Apis";
+import { toast } from "react-toastify";
 
 export const Home = () => {
   const [showSpin, SetShowSpin] = useState(true);
-  const [alluserdata, setAllUserData] = useState([])
+  const [alluserdata, setAllUserData] = useState([]);
+  const [ search, setSearch] = useState("")
   const navigate = useNavigate();
+
   const { userData, setUserData } = useContext(addData);
-
   const { update, setUpdate } = useContext(updateData);
+  const { deletedata, setDeleteData } = useContext(deleteData);
 
-  // console.log("alluserdata", alluserdata)
   const addUser = () => {
     navigate("/register");
   };
 
   const allUserData = async () => {
-    const response= await getUserData()
-    if(response.status ===200) {
-      setAllUserData(response.data)
-    }else{
-      console.log("error for get user data")
+    const response = await getUserData(search);
+    if (response.status === 200) {
+      setAllUserData(response.data);
+    } else {
+      console.log("error for get user data");
     }
-   
+  };
 
-  }
+  const deleteUser = async (id) => {
+    const response = await deleteFunction(id);
+    if (response.status === 200) {
+     
+      allUserData();
+      setDeleteData(response.data);
+    } else {
+      toast.error("Something Went Wrong On Delete");
+    }
+  };
 
   useEffect(() => {
-    allUserData()
+    allUserData();
     setTimeout(() => {
       SetShowSpin(false);
     }, 1500);
-  }, []);
+  }, [search]);
 
   return (
     <>
-    {
-      userData ?  <Alert variant="success" onClose={() => setUserData("")} dismissible>
-      <>{`${userData.fname.toUpperCase()} ${ userData.lname.toUpperCase()}`} Successfully Add To DataBase</>
-    
-    </Alert>:""
-    }
+      {userData ? (
+        <Alert variant="success" onClose={() => setUserData("")} dismissible>
+          <>
+            {`${userData.fname.toUpperCase()} ${userData.lname.toUpperCase()}`}{" "}
+            Successfully Add To DataBase
+          </>
+        </Alert>
+      ) : (
+        ""
+      )}
 
-    {
-      update ? <Alert variant="primary" onClose={() => setUpdate("")} dismissible>
-      <>{`${update.fname.toUpperCase()} ${update.lname.toUpperCase()}`} Successfully Update</>
-    
-    </Alert>:""
-    }
+      {update ? (
+        <Alert variant="primary" onClose={() => setUpdate("")} dismissible>
+          <>
+            {`${update.fname.toUpperCase()} ${update.lname.toUpperCase()}`}{" "}
+            Successfully Update
+          </>
+        </Alert>
+      ) : (
+        ""
+      )}
+
+      { deletedata ? (
+        <Alert variant="danger" onClose={() => setDeleteData("")} dismissible>
+          <>
+            {`${deletedata.fname.toUpperCase()} ${deletedata.lname.toUpperCase()}`}{" "}
+            Delete Successfully Update
+          </>
+        </Alert>
+      ) : (
+        ""
+      )}
       <div className="container">
         <div className="main_div">
           {/* search_button */}
@@ -70,6 +104,7 @@ export const Home = () => {
                   placeholder="Search"
                   className="me-2"
                   aria-label="Search"
+                  onChange={(e)=> setSearch(e.target.value)}
                 />
                 <Button variant="success" className="search_btn">
                   Search
@@ -159,7 +194,12 @@ export const Home = () => {
             </div>
           </div>
         </div>
-        {showSpin ? <Spiner /> : <Tables alluserdata={alluserdata} />}
+        {showSpin ? (
+          <Spiner />
+        ) : (
+          <Tables alluserdata={alluserdata} deleteUser={deleteUser} />
+        )}
+      
       </div>
     </>
   );

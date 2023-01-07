@@ -3,7 +3,7 @@ const moment = require("moment");
 
 // ********* Register API **********
 
-exports.userpost = async (req, res) => {
+exports.userPost = async (req, res) => {
   const file = req.file.filename;
   const { fname, lname, email, mobile, gender, location, status } = req.body;
 
@@ -51,7 +51,9 @@ exports.userpost = async (req, res) => {
 // ***** To GET ALL USERS DETAILS *********
 
 exports.userGet = async (req, res) => {
+
   try {
+    console.log(req.query)
     const userData = await users.find();
     res.status(200).json(userData);
   } catch (error) {
@@ -70,7 +72,6 @@ exports.singleUserGet = async (req, res) => {
     res.status(200).json(userDetails);
   } catch (error) {
     res.status(424).json(error);
-
   }
 };
 
@@ -78,13 +79,22 @@ exports.singleUserGet = async (req, res) => {
 
 exports.userEdit = async (req, res) => {
   const { id } = req.params;
-  const { fname ,lname ,email ,mobile ,gender ,location ,status ,user_profile } = req.body;
+  const {
+    fname,
+    lname,
+    email,
+    mobile,
+    gender,
+    location,
+    status,
+    user_profile,
+  } = req.body;
   const file = req.file ? req.file.filename : user_profile;
   const dateUpdated = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
 
-
   try {
-    const updateUser = await users.findByIdAndUpdate({ _id: id },
+    const updateUser = await users.findByIdAndUpdate(
+      { _id: id },
       {
         fname,
         lname,
@@ -103,8 +113,19 @@ exports.userEdit = async (req, res) => {
 
     await updateUser.save();
     res.status(200).json(updateUser);
-
   } catch (error) {
-    res.status(401).json(error)
+    res.status(401).json(error);
+  }
+};
+
+// ********* DELETE API FOR SINGLE FRO USER ******
+
+exports.userDelete = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleteUser = await users.findByIdAndDelete({ _id: id });
+    res.status(200).json(deleteUser);
+  } catch (error) {
+    res.status(424).json(error);
   }
 };
