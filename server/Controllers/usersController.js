@@ -51,10 +51,20 @@ exports.userPost = async (req, res) => {
 // ***** To GET ALL USERS DETAILS *********
 
 exports.userGet = async (req, res) => {
+  const search = req.query.search || "";
+  const gender = req.query.gender || ""
 
+  const query = {
+    fname: {
+      $regex: search,
+      $options: "i",
+    },
+  };
+  if(gender !== "All"){
+    query.gender = gender
+  }
   try {
-    console.log(req.query)
-    const userData = await users.find();
+    const userData = await users.find(query);
     res.status(200).json(userData);
   } catch (error) {
     res.status(424).json(error);

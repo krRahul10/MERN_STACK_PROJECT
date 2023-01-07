@@ -19,9 +19,13 @@ import { deleteFunction, getUserData } from "../../services/Apis";
 import { toast } from "react-toastify";
 
 export const Home = () => {
+
   const [showSpin, SetShowSpin] = useState(true);
   const [alluserdata, setAllUserData] = useState([]);
   const [ search, setSearch] = useState("")
+  const [ gender, setGender] = useState("All")
+  const [ status, setStatus] = useState("All")
+
   const navigate = useNavigate();
 
   const { userData, setUserData } = useContext(addData);
@@ -33,7 +37,7 @@ export const Home = () => {
   };
 
   const allUserData = async () => {
-    const response = await getUserData(search);
+    const response = await getUserData(search,gender,status);
     if (response.status === 200) {
       setAllUserData(response.data);
     } else {
@@ -57,7 +61,7 @@ export const Home = () => {
     setTimeout(() => {
       SetShowSpin(false);
     }, 1500);
-  }, [search]);
+  }, [search,gender,status]);
 
   return (
     <>
@@ -101,7 +105,7 @@ export const Home = () => {
               <Form className="d-flex">
                 <Form.Control
                   type="search"
-                  placeholder="Search"
+                  placeholder="Search By Name"
                   className="me-2"
                   aria-label="Search"
                   onChange={(e)=> setSearch(e.target.value)}
@@ -131,7 +135,8 @@ export const Home = () => {
                     type={"radio"}
                     label={`All`}
                     name="gender"
-                    value={"ALL"}
+                    value={"All"}
+                    onChange={(e)=>{setGender(e.target.value)}}
                     defaultChecked
                   />
                   <Form.Check
@@ -139,12 +144,14 @@ export const Home = () => {
                     label={`Male`}
                     name="gender"
                     value={"Male"}
+                    onChange={(e)=>{setGender(e.target.value)}}
                   />
                   <Form.Check
                     type={"radio"}
                     label={`Female`}
                     name="gender"
                     value={"Female"}
+                    onChange={(e)=>{setGender(e.target.value)}}
                   />
                 </div>
               </div>
@@ -174,7 +181,8 @@ export const Home = () => {
                     type={"radio"}
                     label={`All`}
                     name="status"
-                    value={"ALL"}
+                    value={"All"}
+                    onChange={(e)=>{setStatus(e.target.value)}}
                     defaultChecked
                   />
                   <Form.Check
@@ -182,12 +190,14 @@ export const Home = () => {
                     label={`Active`}
                     name="status"
                     value={"Active"}
+                    onChange={(e)=>{setStatus(e.target.value)}}
                   />
                   <Form.Check
                     type={"radio"}
                     label={`InActive`}
                     name="status"
                     value={"InActive"}
+                    onChange={(e)=>{setStatus(e.target.value)}}
                   />
                 </div>
               </div>

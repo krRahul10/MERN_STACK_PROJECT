@@ -5,8 +5,8 @@ export const registerFunction = async (data,header) => {
 return await commonRequest("POST", `${BACKEND_URL}/user/register`,data,header)
 }
 
-export const getUserData = async (search) => {
-    return await commonRequest("GET",`${BACKEND_URL}/user/details?search=${search}`,"")
+export const getUserData = async (search,gender,status) => {
+    return await commonRequest("GET",`${BACKEND_URL}/user/details?search=${search}&gender=${gender}&${status}`,"")
 }
 
 export const getSingleUserData = async (id) => {
