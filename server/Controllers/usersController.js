@@ -52,19 +52,28 @@ exports.userPost = async (req, res) => {
 
 exports.userGet = async (req, res) => {
   const search = req.query.search || "";
-  const gender = req.query.gender || ""
+  const gender = req.query.gender || "";
+  const status = req.query.status || "";
+  const sort = req.query.sort || "";
 
+  console.log(req.query);
   const query = {
     fname: {
       $regex: search,
       $options: "i",
     },
   };
-  if(gender !== "All"){
-    query.gender = gender
+  if (gender !== "All") {
+    query.gender = gender;
+  }
+
+  if (status !== "All") {
+    query.status = status;
   }
   try {
-    const userData = await users.find(query);
+    const userData = await users
+      .find(query)
+      .sort({ dateCreated: sort === "new" ? -1 : 1 });
     res.status(200).json(userData);
   } catch (error) {
     res.status(424).json(error);

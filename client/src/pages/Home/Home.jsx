@@ -25,6 +25,7 @@ export const Home = () => {
   const [ search, setSearch] = useState("")
   const [ gender, setGender] = useState("All")
   const [ status, setStatus] = useState("All")
+  const [ sort, setSort] = useState("new")
 
   const navigate = useNavigate();
 
@@ -37,7 +38,7 @@ export const Home = () => {
   };
 
   const allUserData = async () => {
-    const response = await getUserData(search,gender,status);
+    const response = await getUserData(search,gender,status,sort);
     if (response.status === 200) {
       setAllUserData(response.data);
     } else {
@@ -61,7 +62,7 @@ export const Home = () => {
     setTimeout(() => {
       SetShowSpin(false);
     }, 1500);
-  }, [search,gender,status]);
+  }, [search,gender,status,sort]);
 
   return (
     <>
@@ -165,8 +166,8 @@ export const Home = () => {
                   <i className="fa-solid fa-sort"></i>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item>New</Dropdown.Item>
-                  <Dropdown.Item>Old</Dropdown.Item>
+                  <Dropdown.Item onClick={()=> setSort("new")}>New</Dropdown.Item>
+                  <Dropdown.Item onClick={()=> setSort("old")}>Old</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
