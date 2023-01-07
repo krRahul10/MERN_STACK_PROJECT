@@ -9,7 +9,7 @@ import { Spiner } from "../../Components/Spiner/Spiner";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useContext } from "react";
-import { addData } from "../../Components/context/ContextProvider";
+import { addData, updateData } from "../../Components/context/ContextProvider";
 import Alert from 'react-bootstrap/Alert';
 import { getUserData } from "../../services/Apis";
 
@@ -18,6 +18,8 @@ export const Home = () => {
   const [alluserdata, setAllUserData] = useState([])
   const navigate = useNavigate();
   const { userData, setUserData } = useContext(addData);
+
+  const { update, setUpdate } = useContext(updateData);
 
   // console.log("alluserdata", alluserdata)
   const addUser = () => {
@@ -47,6 +49,13 @@ export const Home = () => {
     {
       userData ?  <Alert variant="success" onClose={() => setUserData("")} dismissible>
       <>{`${userData.fname.toUpperCase()} ${ userData.lname.toUpperCase()}`} Successfully Add To DataBase</>
+    
+    </Alert>:""
+    }
+
+    {
+      update ? <Alert variant="primary" onClose={() => setUpdate("")} dismissible>
+      <>{`${update.fname.toUpperCase()} ${update.lname.toUpperCase()}`} Successfully Update</>
     
     </Alert>:""
     }

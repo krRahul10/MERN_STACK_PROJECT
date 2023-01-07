@@ -12,3 +12,7 @@ export const getUserData = async () => {
 export const getSingleUserData = async (id) => {
     return await commonRequest("GET",`${BACKEND_URL}/userprofile/${id}`,"")
 }
+
+export const  editFunction = async (id,data,header) => {
+    return await commonRequest("PUT",`${BACKEND_URL}/user/edit/${id}`, data, header)
+}

@@ -70,5 +70,41 @@ exports.singleUserGet = async (req, res) => {
     res.status(200).json(userDetails);
   } catch (error) {
     res.status(424).json(error);
+
+  }
+};
+
+// ************* for single user update **********
+
+exports.userEdit = async (req, res) => {
+  const { id } = req.params;
+  const { fname ,lname ,email ,mobile ,gender ,location ,status ,user_profile } = req.body;
+  const file = req.file ? req.file.filename : user_profile;
+  const dateUpdated = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
+
+
+  try {
+    const updateUser = await users.findByIdAndUpdate({ _id: id },
+      {
+        fname,
+        lname,
+        email,
+        mobile,
+        gender,
+        status,
+        location,
+        profile: file,
+        dateUpdated,
+      },
+      {
+        new: true,
+      }
+    );
+
+    await updateUser.save();
+    res.status(200).json(updateUser);
+
+  } catch (error) {
+    res.status(401).json(error)
   }
 };
