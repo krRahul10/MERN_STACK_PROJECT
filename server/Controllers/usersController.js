@@ -1,5 +1,7 @@
 const users = require("../models/usersSchema");
 const moment = require("moment");
+const csv = require("fast-csv");
+const fs = require("fs");
 
 // ********* Register API **********
 
@@ -55,8 +57,11 @@ exports.userGet = async (req, res) => {
   const gender = req.query.gender || "";
   const status = req.query.status || "";
   const sort = req.query.sort || "";
+  const page= req.query.page || 1
+  const ITEM_PER_PAGE = 4
 
-  console.log(req.query);
+
+  // console.log(req.query);
   const query = {
     fname: {
       $regex: search,
@@ -71,10 +76,30 @@ exports.userGet = async (req, res) => {
     query.status = status;
   }
   try {
+
+    const skip = (page-1)*ITEM_PER_PAGE // 1-1*4=0  4-1*4=12
+
+    const countData = await users.countDocuments(query);
+    // console.log(countData)
+
+
     const userData = await users
       .find(query)
-      .sort({ dateCreated: sort === "new" ? -1 : 1 });
-    res.status(200).json(userData);
+      .sort({ dateCreated: sort === "new" ? -1 : 1 })
+      .limit(ITEM_PER_PAGE)
+      .skip(skip)
+
+      const pageCount = Math.ceil(countData/ITEM_PER_PAGE) // 8/4=2
+
+
+
+
+    res.status(200).json({
+      Pagination:{
+        countData,pageCount
+      },
+      userData
+    });
   } catch (error) {
     res.status(424).json(error);
   }
@@ -146,5 +171,74 @@ exports.userDelete = async (req, res) => {
     res.status(200).json(deleteUser);
   } catch (error) {
     res.status(424).json(error);
+  }
+};
+
+// ********** single user status change api ********
+
+exports.userStatus = async (req, res) => {
+  const { id } = req.params;
+  const { data } = req.body;
+  try {
+    const userStatusUpdate = await users.findByIdAndUpdate(
+      { _id: id },
+      { status: data },
+      { new: true }
+    );
+    res.status(200).json(userStatusUpdate);
+  } catch (error) {
+    res.status(401).json(error);
+  }
+};
+
+// Export User
+
+exports.userExport = async (req, res) => {
+  try {
+    const usersData = await users.find();
+
+    const csvStream = csv.format({ headers: true });
+
+    if (!fs.existsSync("public/files/export")) {
+      if (!fs.existsSync("public/files")) {
+        fs.mkdirSync("public/files/");
+      }
+      if (!fs.existsSync("public/files/export")) {
+        fs.mkdirSync("./public/files/export");
+      }
+    }
+
+    const writablestream = fs.createWriteStream(
+      "public/files/export/users.csv"
+    );
+
+    csvStream.pipe(writablestream);
+
+    writablestream.on("finish", function () {
+      res.status(200).json({
+        downloadUrl:`http://localhost:6010/files/export/users.csv`,
+      });
+    });
+
+    if (usersData.length > 0) {
+      usersData.map((user) => {
+        csvStream.write({
+          FirstName: user.fname ? user.fname : "-",
+          LastName: user.lname ? user.lname : "-",
+          Email: user.email ? user.email : "-",
+          Phone: user.mobile ? user.mobile : "-",
+          Gender: user.gender ? user.gender : "-",
+          Status: user.status ? user.status : "-",
+          Profile: user.profile ? user.profile : "-",
+          Location: user.location ? user.location : "-",
+          DateCreated: user.dateCreated ? user.dateCreated : "-",
+          DateUpdated: user.dateUpdated ? user.dateUpdated : "-",
+        });
+      });
+    }
+    csvStream.end();
+    writablestream.end();
+  } catch (error) {
+    res.status(401).json(error);
   }
 };

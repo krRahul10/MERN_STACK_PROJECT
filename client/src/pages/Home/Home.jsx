@@ -15,17 +15,22 @@ import {
   updateData,
 } from "../../Components/context/ContextProvider";
 import Alert from "react-bootstrap/Alert";
-import { deleteFunction, getUserData } from "../../services/Apis";
+import {
+  deleteFunction,
+  exportToCsvFunction,
+  getUserData,
+} from "../../services/Apis";
 import { toast } from "react-toastify";
 
 export const Home = () => {
-
   const [showSpin, SetShowSpin] = useState(true);
   const [alluserdata, setAllUserData] = useState([]);
-  const [ search, setSearch] = useState("")
-  const [ gender, setGender] = useState("All")
-  const [ status, setStatus] = useState("All")
-  const [ sort, setSort] = useState("new")
+  const [search, setSearch] = useState("");
+  const [gender, setGender] = useState("All");
+  const [status, setStatus] = useState("All");
+  const [sort, setSort] = useState("new");
+  const [page, setPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
 
   const navigate = useNavigate();
 
@@ -38,9 +43,11 @@ export const Home = () => {
   };
 
   const allUserData = async () => {
-    const response = await getUserData(search,gender,status,sort);
+    const response = await getUserData(search, gender, status, sort, page);
+    // console.log(response.data.Pagination.pageCount)
     if (response.status === 200) {
-      setAllUserData(response.data);
+      setAllUserData(response.data.userData);
+      setPageCount(response.data.Pagination.pageCount);
     } else {
       console.log("error for get user data");
     }
@@ -49,7 +56,6 @@ export const Home = () => {
   const deleteUser = async (id) => {
     const response = await deleteFunction(id);
     if (response.status === 200) {
-     
       allUserData();
       setDeleteData(response.data);
     } else {
@@ -57,12 +63,42 @@ export const Home = () => {
     }
   };
 
+  // export user
+
+  const exportUser = async () => {
+    const response = await exportToCsvFunction();
+    // console.log(response);
+    if (response.status === 200) {
+      window.open(response.data.downloadUrl, "blank");
+    } else {
+      toast.error("Error for CSV file");
+    }
+  };
+
+  // Pagination
+  // Handle Previous Button
+
+  const handlePrev = () => {
+    setPage(() => {
+      if (page === 1) return page;
+      return page - 1;
+    });
+  };
+
+  // Handle Increment Page
+
+  const handleNext = () => {
+    setPage(() => {
+      if (page === pageCount) return page;
+      return page + 1;
+    });
+  };
   useEffect(() => {
     allUserData();
     setTimeout(() => {
       SetShowSpin(false);
     }, 1500);
-  }, [search,gender,status,sort]);
+  }, [search, gender, status, sort, page]);
 
   return (
     <>
@@ -88,7 +124,7 @@ export const Home = () => {
         ""
       )}
 
-      { deletedata ? (
+      {deletedata ? (
         <Alert variant="danger" onClose={() => setDeleteData("")} dismissible>
           <>
             {`${deletedata.fname.toUpperCase()} ${deletedata.lname.toUpperCase()}`}{" "}
@@ -109,7 +145,7 @@ export const Home = () => {
                   placeholder="Search By Name"
                   className="me-2"
                   aria-label="Search"
-                  onChange={(e)=> setSearch(e.target.value)}
+                  onChange={(e) => setSearch(e.target.value)}
                 />
                 <Button variant="success" className="search_btn">
                   Search
@@ -126,7 +162,9 @@ export const Home = () => {
 
           <div className="filter_div mt-5 d-flex justify-content-between flex-wrap">
             <div className="export_csv">
-              <Button className="export_btn">Export To Csv</Button>
+              <Button className="export_btn" onClick={exportUser}>
+                Export To Csv
+              </Button>
             </div>
             <div className="filter_gender">
               <div className="filter">
@@ -137,7 +175,9 @@ export const Home = () => {
                     label={`All`}
                     name="gender"
                     value={"All"}
-                    onChange={(e)=>{setGender(e.target.value)}}
+                    onChange={(e) => {
+                      setGender(e.target.value);
+                    }}
                     defaultChecked
                   />
                   <Form.Check
@@ -145,14 +185,18 @@ export const Home = () => {
                     label={`Male`}
                     name="gender"
                     value={"Male"}
-                    onChange={(e)=>{setGender(e.target.value)}}
+                    onChange={(e) => {
+                      setGender(e.target.value);
+                    }}
                   />
                   <Form.Check
                     type={"radio"}
                     label={`Female`}
                     name="gender"
                     value={"Female"}
-                    onChange={(e)=>{setGender(e.target.value)}}
+                    onChange={(e) => {
+                      setGender(e.target.value);
+                    }}
                   />
                 </div>
               </div>
@@ -166,8 +210,12 @@ export const Home = () => {
                   <i className="fa-solid fa-sort"></i>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item onClick={()=> setSort("new")}>New</Dropdown.Item>
-                  <Dropdown.Item onClick={()=> setSort("old")}>Old</Dropdown.Item>
+                  <Dropdown.Item onClick={() => setSort("new")}>
+                    New
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => setSort("old")}>
+                    Old
+                  </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -183,7 +231,9 @@ export const Home = () => {
                     label={`All`}
                     name="status"
                     value={"All"}
-                    onChange={(e)=>{setStatus(e.target.value)}}
+                    onChange={(e) => {
+                      setStatus(e.target.value);
+                    }}
                     defaultChecked
                   />
                   <Form.Check
@@ -191,14 +241,18 @@ export const Home = () => {
                     label={`Active`}
                     name="status"
                     value={"Active"}
-                    onChange={(e)=>{setStatus(e.target.value)}}
+                    onChange={(e) => {
+                      setStatus(e.target.value);
+                    }}
                   />
                   <Form.Check
                     type={"radio"}
                     label={`InActive`}
                     name="status"
                     value={"InActive"}
-                    onChange={(e)=>{setStatus(e.target.value)}}
+                    onChange={(e) => {
+                      setStatus(e.target.value);
+                    }}
                   />
                 </div>
               </div>
@@ -208,9 +262,17 @@ export const Home = () => {
         {showSpin ? (
           <Spiner />
         ) : (
-          <Tables alluserdata={alluserdata} deleteUser={deleteUser} />
+          <Tables
+            alluserdata={alluserdata}
+            deleteUser={deleteUser}
+            allUserData={allUserData}
+            handleNext={handleNext}
+            handlePrev={handlePrev}
+            page={page}
+            pageCount={pageCount}
+            setPage={setPage}
+          />
         )}
-      
       </div>
     </>
   );
