@@ -2,6 +2,7 @@ const users = require("../models/usersSchema");
 const moment = require("moment");
 const csv = require("fast-csv");
 const fs = require("fs");
+const BASE_URL = process.env.BASE_URL
 
 // ********* Register API **********
 
@@ -216,7 +217,7 @@ exports.userExport = async (req, res) => {
 
     writablestream.on("finish", function () {
       res.status(200).json({
-        downloadUrl:`http://localhost:6010/files/export/users.csv`,
+        downloadUrl:`${BASE_URL}/files/export/users.csv`,
       });
     });
 
